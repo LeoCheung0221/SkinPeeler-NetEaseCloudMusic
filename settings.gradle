@@ -1,2 +1,4 @@
+include ':SkinBag'
+include ':QSkinSdk'
 include ':app'
 rootProject.name = "QSkinHook"
