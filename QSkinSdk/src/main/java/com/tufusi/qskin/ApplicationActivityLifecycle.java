@@ -50,7 +50,7 @@ public class ApplicationActivityLifecycle implements Application.ActivityLifecyc
             e.printStackTrace();
         }
 
-        SkinLayoutInflaterFactory inflaterFactory = new SkinLayoutInflaterFactory();
+        SkinLayoutInflaterFactory inflaterFactory = new SkinLayoutInflaterFactory(activity);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.tufusi.qskin.utils;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 /**
@@ -74,7 +75,7 @@ public class SkinResources {
         }
 
         int skinId = getIdentifier(resId);
-        if (skinId == 0){
+        if (skinId == 0) {
             return mAppResources.getColor(resId);
         }
 
@@ -82,12 +83,12 @@ public class SkinResources {
     }
 
     public ColorStateList getColorStateList(int resId) {
-        if (isDefaultSkin){
+        if (isDefaultSkin) {
             return mAppResources.getColorStateList(resId);
         }
 
         int skinId = getIdentifier(resId);
-        if (skinId == 0){
+        if (skinId == 0) {
             return mAppResources.getColorStateList(resId);
         }
 
@@ -112,5 +113,32 @@ public class SkinResources {
         mSkinResources = null;
         mSkinPkgName = "";
         isDefaultSkin = true;
+    }
+
+    /**
+     * 可能是Color 也可能是drawable
+     */
+    public Object getBackground(int resId) {
+        String resourceTypeName = mAppResources.getResourceTypeName(resId);
+
+        if ("color".equals(resourceTypeName)) {
+            return getColor(resId);
+        } else {
+            return getDrawable(resId);
+        }
+    }
+
+    public Drawable getDrawable(int resId) {
+        if (isDefaultSkin) {
+            return mAppResources.getDrawable(resId);
+        }
+
+        // 通过 APP 的resource 获取id 对应的 资源名与 资源类型
+        // 找到皮肤包 匹配的 资源名资源类型 的皮肤包的资源ID
+        int skinId = getIdentifier(resId);
+        if (skinId == 0) {
+            return mAppResources.getDrawable(resId);
+        }
+        return mSkinResources.getDrawable(resId);
     }
 }
