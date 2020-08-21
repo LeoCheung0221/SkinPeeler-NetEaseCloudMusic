@@ -45,7 +45,7 @@ public class SkinManager extends Observable {
         //资源管理类，用于获取从 app/皮肤插件 中资源加载
         SkinResources.init(application);
         // 注册Activity生命周期，并设置被观察者
-        skinActivityLifecycle = new ApplicationActivityLifecycle(this);
+        skinActivityLifecycle = new     ApplicationActivityLifecycle(this);
         application.registerActivityLifecycleCallbacks(skinActivityLifecycle);
         // 记载上次保存的皮肤包
         loadSkinBag(SkinPreference.getInstance().getSkin());

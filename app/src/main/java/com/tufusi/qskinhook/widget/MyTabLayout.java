@@ -47,8 +47,8 @@ public class MyTabLayout extends TabLayout implements SkinViewSupport {
         }
 
         if (tabTextColorResId != 0) {
-            ColorStateList tabITextColor = SkinResources.getInstance().getColorStateList(tabTextColorResId);
-            setTabTextColors(tabITextColor);
+            ColorStateList tabTextColor = SkinResources.getInstance().getColorStateList(tabTextColorResId);
+            setTabTextColors(tabTextColor);
         }
     }
 }

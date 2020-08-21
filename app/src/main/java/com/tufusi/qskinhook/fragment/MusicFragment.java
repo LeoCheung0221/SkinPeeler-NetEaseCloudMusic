@@ -30,4 +30,9 @@ public class MusicFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_music, container, false);
         return view;
     }
+
+    @Override
+    public LayoutInflater onGetLayoutInflater(Bundle savedInstanceState) {
+        return super.onGetLayoutInflater(savedInstanceState);
+    }
 }

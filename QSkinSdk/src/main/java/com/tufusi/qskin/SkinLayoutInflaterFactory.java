@@ -27,10 +27,10 @@ import java.util.Observer;
 public class SkinLayoutInflaterFactory implements LayoutInflater.Factory2, Observer {
 
     private static final String[] mClassPrefixList = {
-            "android.widget",
-            "android.webkit",
-            "android.app",
-            "android.view"
+            "android.widget.",
+            "android.webkit.",
+            "android.app.",
+            "android.view."
     };
 
     /**
@@ -60,50 +60,57 @@ public class SkinLayoutInflaterFactory implements LayoutInflater.Factory2, Obser
     @Nullable
     @Override
     public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attributeSet) {
+        // 换肤就是在需要的时候替换 View 的属性（src、background 等等）
         // 此处开始创建View 并进行View属性修改
         View view = createSDKView(name, context, attributeSet);
 
+        // 这里判空是因为：自定义View没有在createSDKView 中创建，那么就可以在这里创建
         if (view == null) {
             view = createOriginView(name, context, attributeSet);
         }
+
+        // 创建出 View之后 将View以及其对应的需要换肤的属性和属性值保存
+        // 会保存系统 View 和 实现了 SkinSupport 接口定义的 View， 没有实现 SkinSupport 接口的自定义View 则不会保存在 SkinAttribute属性对象中
         if (view != null) {
             // 加载属性
             skinAttribute.look(view, attributeSet);
         }
 
+        // 如果是返回的null 则依然是调用系统的LayoutInflater 的 createView 方法创建的View，这一般不会造成什么影响
+        // 注意：这里一定不能返回null，否则会去调用系统的 onCreateView。
         return view;
     }
 
     private View createOriginView(String name, Context context, AttributeSet attributeSet) {
         Constructor<? extends View> constructor = findConstructor(context, name);
-        if (constructor == null) {
-            return null;
-        }
         try {
+            // 通过 View 的构造器，初始化创建 View 实例，attrs 是 View 的属性集合
             return constructor.newInstance(context, attributeSet);
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return null;
     }
 
     private Constructor<? extends View> findConstructor(Context context, String name) {
+        // 从缓存中查询构造器，因为有可能有重复的 View：在一个布局中，布局位置不同
         Constructor<? extends View> constructor = mConstructorMap.get(name);
         if (constructor == null) {
             try {
                 Class<? extends View> clazz = context.getClassLoader().loadClass(name).asSubclass(View.class);
+                // 根据class对象获取 Constructor 实例
                 constructor = clazz.getConstructor(mConstructorSignature);
                 mConstructorMap.put(name, constructor);
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
         }
-        return null;
+        return constructor;
     }
 
     private View createSDKView(String name, Context context, AttributeSet attributeSet) {
         // 如果包含 则不是SDK中的 view 可能是自定义 view 或者包括support库中的view
-        if (name.indexOf(".") != -1) {
+        if (-1 != name.indexOf('.')) {
             return null;
         }
 
