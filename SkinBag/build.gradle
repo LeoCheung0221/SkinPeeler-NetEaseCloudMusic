@@ -5,8 +5,7 @@ android {
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        applicationId "com.tufusi.skinbag"
-
+        applicationId "com.tufusi.qskinhook"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1

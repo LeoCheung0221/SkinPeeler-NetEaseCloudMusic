@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tufusi.qskin.utils.SkinPreference;
 import com.tufusi.qskin.utils.SkinResources;
@@ -20,6 +21,8 @@ import java.util.Observable;
  * @description 皮肤包管理类 被观察对象
  */
 public class SkinManager extends Observable {
+
+    private static final String TAG = "SkinManager";
 
     private volatile static SkinManager sInstance;
     private Application mContext;
@@ -79,7 +82,11 @@ public class SkinManager extends Observable {
                 // 获取皮肤包 包名
                 PackageManager pm = mContext.getPackageManager();
                 PackageInfo info = pm.getPackageArchiveInfo(apkPath, PackageManager.GET_ACTIVITIES);
-                assert info != null;
+
+                if (info == null) {
+                    Log.e(TAG, "loadSkinBag: 皮肤包未加载成功");
+                    return;
+                }
                 String pkgName = info.packageName;
 
                 SkinResources.getInstance().applySkinApk(skinResources, pkgName);

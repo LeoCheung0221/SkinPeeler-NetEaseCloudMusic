@@ -3,10 +3,12 @@ package com.tufusi.qskin;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.LayoutInflaterCompat;
 
 import com.tufusi.qskin.utils.SkinThemeUtils;
 
@@ -22,6 +24,8 @@ import java.util.Observable;
 public class ApplicationActivityLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Observable mObservable;
+
+    private ArrayMap<Activity, SkinLayoutInflaterFactory> mLayoutInflaterFactories = new ArrayMap<>();
 
     public ApplicationActivityLifecycle(Observable observable) {
         mObservable = observable;
@@ -50,7 +54,12 @@ public class ApplicationActivityLifecycle implements Application.ActivityLifecyc
             e.printStackTrace();
         }
 
-        SkinLayoutInflaterFactory inflaterFactory = new SkinLayoutInflaterFactory(activity);
+        SkinLayoutInflaterFactory skinLayoutInflaterFactory = new SkinLayoutInflaterFactory(activity);
+        LayoutInflaterCompat.setFactory2(layoutInflater, skinLayoutInflaterFactory);
+
+        mLayoutInflaterFactories.put(activity, skinLayoutInflaterFactory);
+
+        mObservable.addObserver(skinLayoutInflaterFactory);
     }
 
     @Override
@@ -80,6 +89,7 @@ public class ApplicationActivityLifecycle implements Application.ActivityLifecyc
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-
+        SkinLayoutInflaterFactory observer = mLayoutInflaterFactories.remove(activity);
+        SkinManager.getInstance().deleteObserver(observer);
     }
 }
